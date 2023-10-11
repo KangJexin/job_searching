@@ -10,7 +10,20 @@ target locations and my background.
 # Read in the original data
 job<- arrow::read_feather('data/job_descriptions.feather')
 library(tidyverse)
+```
 
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
+    ## ✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+    ## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+    ## ✔ purrr     1.0.2     
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
 # set my target location to work
 target_country <- c('USA','UK', 'China', 'Singapore', 'Macao SAR, China', 'Hong Kong SAR, China')
 ```
@@ -54,6 +67,19 @@ job_location <- Job_clean %>%
   summarise(mean_salary = mean(mean_salary)) %>% 
   arrange(desc(mean_salary))
 job_location
+```
+
+    ## # A tibble: 6 × 2
+    ##   Country              mean_salary
+    ##   <chr>                      <dbl>
+    ## 1 USA                         84.0
+    ## 2 Macao SAR, China            83.0
+    ## 3 Hong Kong SAR, China        82.9
+    ## 4 China                       82.5
+    ## 5 UK                          82.5
+    ## 6 Singapore                   82.3
+
+``` r
 # The results seems to be wrong, due to a common currency in the original dataset.
 ```
 
@@ -75,6 +101,14 @@ job_location <- job_location %>%
 job_location
 ```
 
+    ##                Country mean_salary rate adjusted_salary
+    ## 1                   UK    82.45652 1.21        99.77239
+    ## 2                  USA    84.04217 1.00        84.04217
+    ## 3            Singapore    82.28313 0.73        60.06669
+    ## 4                China    82.48500 0.14        11.54790
+    ## 5 Hong Kong SAR, China    82.89865 0.13        10.77682
+    ## 6     Macao SAR, China    83.04667 0.12         9.96560
+
 # what if we add purchasing power parity into consideration (PPP)
 
 # PPP data was gained from OECD website, since there are only 6 data to collect, I just copied the data instead of merging a whole ppp data.
@@ -94,6 +128,14 @@ job_location <- job_location %>%
 job_location
 ```
 
+    ##                Country mean_salary rate adjusted_salary  ppp ppp_salary
+    ## 1                  USA    84.04217 1.00        84.04217 1.00   84.04217
+    ## 2                   UK    82.45652 1.21        99.77239 0.70   69.84067
+    ## 3 Hong Kong SAR, China    82.89865 0.13        10.77682 5.87   63.25996
+    ## 4     Macao SAR, China    83.04667 0.12         9.96560 5.87   58.49807
+    ## 5            Singapore    82.28313 0.73        60.06669 0.84   50.45602
+    ## 6                China    82.48500 0.14        11.54790 4.18   48.27022
+
 ## Which country have more emphasize on ‘Data’
 
 ``` r
@@ -110,6 +152,19 @@ data <- Job_clean %>%
   arrange(desc(data_count))
 
 data
+```
+
+    ## # A tibble: 6 × 2
+    ##   Country              data_count
+    ##   <chr>                     <int>
+    ## 1 China                       122
+    ## 2 Singapore                   103
+    ## 3 USA                          93
+    ## 4 UK                           90
+    ## 5 Macao SAR, China             76
+    ## 6 Hong Kong SAR, China         63
+
+``` r
 # The result shows China has the greatest concentration on 'data'.
 ```
 
@@ -127,7 +182,12 @@ Job_number <- Job_clean %>%
   summarise(number = n()) %>% 
   arrange(Job_year, month) %>% 
   mutate(date = paste(Job_year, month, sep = '-'))
+```
 
+    ## `summarise()` has grouped output by 'Job_year'. You can override using the
+    ## `.groups` argument.
+
+``` r
 ggplot(Job_number, aes(month, number)) +
   geom_point()+
   theme_minimal()+
@@ -136,3 +196,5 @@ ggplot(Job_number, aes(month, number)) +
        y = "Number of Job Posting", 
        title = "Number of Job Posting in 2022")
 ```
+
+![](readme_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
